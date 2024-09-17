@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 
 interface FormInput {
     name: string;
@@ -10,6 +10,15 @@ interface FormInput {
 const CreateNFT = () => {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [formInput, setFormInput] = useState<FormInput>({ name: "", price: "", description: "" });
+
+    async function handleChange(e: ChangeEvent<HTMLInputElement>) {
+        const file = e.target.files?.[0];
+        if(!file) return;
+
+        
+        console.log(file);
+        
+    }
 
     return (
         <div className="flex justify-center">
@@ -39,6 +48,7 @@ const CreateNFT = () => {
                     type="file"
                     name="Asset"
                     className="my-4"
+                    onChange={handleChange}
                 />
                 <button className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
                     Create NFT
