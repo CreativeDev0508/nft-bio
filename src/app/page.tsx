@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from "react";
 // import Image from "next/image";
-import { JsonRpcProvider, Contract, formatUnits, BrowserProvider, parseUnits } from "ethers";
+import { JsonRpcProvider, Contract, formatUnits, BrowserProvider, parseUnits, ethers } from "ethers";
 import axios from 'axios';
 import Web3Modal from 'web3modal';
 import { marketplaceAddress } from "../../config";
@@ -75,9 +75,30 @@ export default function Home() {
     console.log("signer:", signer);
 
   }
+
+  async function getPrice() {
+    // const web3Modal = new Web3Modal();
+    // const connection = await web3Modal.connect();
+    
+    // const provider = new BrowserProvider(connection);
+    // const provider = new providers.JsonRpcProvider("http://localhost:8545");
+    const provider = new JsonRpcProvider();
+    
+    const signer = await provider.getSigner();
+    const contract = new Contract(marketplaceAddress, NFTBio.abi, provider);
+    console.log("contract", contract);
+    const price = await contract.getListingPrice();
+    console.log("price:", price);
+
+  }
   if (loaded === true && !nfts?.length) return (
     <div className="flex justify-center items-center h-full">
-      <p className="text-red-400 text-2xl text-center">No items in marketplace.</p>
+      <p className="text-red-400 text-2xl text-center">
+        No items in marketplace.
+      </p>
+      <button onClick={getPrice} className="border border-sky-100 ml-5 p-3">
+        Get ListingPrice
+      </button>
     </div>
   )
   return (
