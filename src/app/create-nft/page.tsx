@@ -1,6 +1,11 @@
 "use client";
 import { useState, ChangeEvent } from "react";
 import axios from "axios";
+import Web3Modal from 'web3modal';
+import { BrowserProvider, Contract, parseUnits } from 'ethers';
+import { marketplaceAddress } from "../../../config";
+import { useRouter } from "next/navigation";
+import NFTBio from "../../../artifacts/contracts/NFTBio.sol/NFTBio.json";
 interface FormInput {
     name: string;
     price: string;
@@ -12,6 +17,7 @@ interface FormInput {
 const CreateNFT = () => {
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [formInput, setFormInput] = useState<FormInput>({ name: "", price: "", description: "" });
+    const router = useRouter();
 
     async function handleChange(e: ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
@@ -73,6 +79,23 @@ const CreateNFT = () => {
     async function listNFTForSale() {
         const nftUrl = await uploadToIPFS();
         if (!nftUrl) return;
+
+        const web3Modal = new Web3Modal();
+        const connection = await web3Modal.connect();
+        const provider = new BrowserProvider(connection);
+        const signer = await provider.getSigner();
+
+        const contract = new Contract(marketplaceAddress, NFTBio.abi, signer);
+        const price = parseUnits(formInput.price, 'ether');
+        console.log("contract:", contract);
+        
+        let listingPrice = await contract.getListingPrice();
+        listingPrice = listingPrice.toString();
+
+        const createToken = await contract.createToken(nftUrl, price, { value: listingPrice });
+        await createToken.wait();
+        router.push('/');
+
     }
 
     return (
