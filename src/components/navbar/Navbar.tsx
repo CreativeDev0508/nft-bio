@@ -13,7 +13,7 @@ const Navbar = () => {
                     <Link href="/create-nft" className="mr-6 text-pink-500">
                         Sell NFT
                     </Link>
-                    <Link href="/my-nfts" className="mr-6 text-pink-500">
+                    <Link href="/mynfts" className="mr-6 text-pink-500">
                         My NFTs
                     </Link>
                     <Link href="/dashboard" className="mr-6 text-pink-500">

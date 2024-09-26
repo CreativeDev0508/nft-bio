@@ -80,7 +80,10 @@ const CreateNFT = () => {
         const nftUrl = await uploadToIPFS();
         if (!nftUrl) return;
 
-        const web3Modal = new Web3Modal();
+        const web3Modal = new Web3Modal({
+            cacheProvider: false, // set to true if you want to cache the connection for quicker re-connection
+            providerOptions: {}, // Add provider options if needed (like WalletConnect)
+        });
         const connection = await web3Modal.connect();
         const provider = new BrowserProvider(connection);
         const signer = await provider.getSigner();
@@ -88,7 +91,7 @@ const CreateNFT = () => {
         const contract = new Contract(marketplaceAddress, NFTBio.abi, signer);
         const price = parseUnits(formInput.price, 'ether');
         console.log("contract:", contract);
-        
+
         let listingPrice = await contract.getListingPrice();
         listingPrice = listingPrice.toString();
 
