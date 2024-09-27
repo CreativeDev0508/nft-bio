@@ -5,7 +5,7 @@ import Web3Modal from 'web3modal';
 import NFTBio from "../../../artifacts/contracts/NFTBio.sol/NFTBio.json";
 import { marketplaceAddress } from "../../../config";
 import axios from "axios";
-
+import { useRouter } from 'next/navigation';
 interface NFTItem {
     tokenId: number;
     owner: string;
@@ -14,6 +14,7 @@ interface NFTItem {
     image: string;
     price: string;
     description: string;
+    tokenUri:string;
 }
 
 interface MarketItem {
@@ -28,10 +29,10 @@ interface MarketItem {
 const CreatorDashboard = () => {
     const [nfts, setNfts] = useState<NFTItem[]>();
     const [loading, setLoading] = useState<boolean>(true);
-
+    const router = useRouter();
     useEffect(() => {
         loadNFTs();
-    }, [])
+    }, []);
 
     async function loadNFTs() {
         const web3Modal = new Web3Modal({
@@ -57,19 +58,38 @@ const CreatorDashboard = () => {
                 owner: i.owner,
                 name: meta.data.name,
                 image: meta.data.image,
-                description: meta.data.description
+                description: meta.data.description,
+                tokenUri,
             }
             return item;
-            
+
         }))
         setNfts(items);
         setLoading(false);
         console.log("data:", items);
+    };
+
+    function listNFT(nft: NFTItem) {
+        router.push(`/resell-nft?id=${nft.tokenId}&tokenURI=${nft.tokenUri}`)
     }
+    if (loading && !nfts?.length) return <div>No owned items</div>
 
     return (
-        <div>
+        <div className="flex justify-center">
+            <div className="p-4">
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4'>
+                    {nfts?.map((nft, i) => (
 
+                        <div className="border shadow rounded-xl overflow-hidden" key={i}>
+                            <img src={nft.image} alt={nft.name} style={{ width: "100%", height: "58%", }} className='rounded' />
+                            <div className="p-4 bg-black">
+                                <p className="text-2xl font-bold text-white">Price - {nft.price} Eth</p>
+                                <button className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => listNFT(nft)}>List</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }
