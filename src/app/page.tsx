@@ -89,7 +89,7 @@ export default function Home() {
           {
             nfts?.map((nft, i) => (
               <div key={i} className="border">
-                <img src={nft.image} alt={nft.name} style={{ width: "100%" }} />
+                <img src={nft.image} alt={nft.name} style={{ width: "100%", height: "47%", }} />
                 {/* <Image
                   src={nft.image}
                   alt={nft.name}
