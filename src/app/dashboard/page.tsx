@@ -69,7 +69,7 @@ const CreatorDashboard = () => {
                     nfts?.map((item, index) => (
                         <div className='border shadow rounded-xl overflow-hidden' key={index}>
                             <img src={item.image} alt={item.name} className='rounded' />
-                            <div className="p-4 bg-black">
+                            <div className="p-3 bg-black">
                                 <p className="text-2xl font-bold text-white">Price - {item.price} ETH</p>
                             </div>
                         </div>
